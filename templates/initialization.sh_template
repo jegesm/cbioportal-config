@@ -1,0 +1,18 @@
+cd ##RF##
+wget https://github.com/cBioPortal/datahub/raw/master/seedDB/seed-cbioportal_hg19_v2.7.2.sql.gz
+docker cp ##RF##/src.cbioportal/db-scripts/src/main/resources/cgds.sql ##PREFIX##-##CBIOPORTAL_NAME##-mysql:/tmp
+docker cp seed-cbioportal_hg19_v2.7.2.sql.gz ##PREFIX##-##CBIOPORTAL_NAME##-mysql:/tmp
+
+# In the container
+docker exec -it ##PREFIX##-##CBIOPORTAL_NAME##-mysql bash
+
+cd /tmp
+gunzip seed-cbioportal_hg19_v2.7.2.sql.gz
+mysql --user=##CBIOPORTALDB_USER## --password=##CBIOPORTALDB_PW## --host=##CBIOPORTALDB_URL## ##CBIOPORTALDB##  < cgds.sql
+mysql --user=##CBIOPORTALDB_USER## --password=##CBIOPORTALDB_PW##  --host=##CBIOPORTALDB_URL## ##CBIOPORTALDB## < seed-cbioportal_hg19_v2.7.2.sql
+
+##docker cp portal.properties ##PREFIX##-##CBIOPORTAL_NAME##:/usr/local/tomcat/webapps/cbioportal/WEB-INF/classes/portal.properties
+
+docker exec -it ##PREFIX##-##CBIOPORTAL_NAME## bash
+migrate_db.py -p /cbioportal/src/main/resources/portal.properties -s /cbioportal/db-scripts/src/main/resources/migration.sql
+

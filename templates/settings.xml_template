@@ -1,0 +1,9 @@
+<settings>
+  <servers>
+    <server>
+      <id>settingsKey</id>
+      <username>##CBIOPORTALDB_USER##</username>
+      <password>##CBIOPORTALDB_PW##</password>
+    </server>
+  </servers>
+</settings>
