@@ -38,9 +38,12 @@ docker $DOCKERARGS volume create -o type=none -o device=$SRV/_report -o o=bind $
 docker $DOCKERARGS volume create -o type=none -o device=$SRV/_${CBIOPORTAL_NAME}-studies -o o=bind ${PREFIX}-${CBIOPORTAL_NAME}-studies
 
 #cp Dockerfile  $RF/Dockerfile
-cp templates/entrypoint.sh $RF/entrypoint.sh
+sed -e "s/##CBIOPORTAL_NAME##/${CBIOPORTAL_NAME}/"  templates/entrypoint.sh-template > $RF/entrypoint.sh
+
 [ ! -d $RF/src.cbioportal ] && git clone https://github.com/jegesm/cbioportal.git $RF/src.cbioportal\
-	&& cd $RF/src.cbioportal && git checkout tags/v1.18.0
+	&& cd $RF/src.cbioportal && git checkout tags/v2.0.1\
+	&& grep -l "0-unknown-version-SNAPSHOT" -R | xargs -n 1 sed -i -e 's/0-unknown-version-SNAPSHOT/2.0.1/'
+
 cd $CONFDIR
 
 #cp log4j.properties $RF/etc

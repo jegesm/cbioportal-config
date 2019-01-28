@@ -14,5 +14,5 @@ mysql --user=##CBIOPORTALDB_USER## --password=##CBIOPORTALDB_PW##  --host=##CBIO
 ##docker cp portal.properties ##PREFIX##-##CBIOPORTAL_NAME##:/usr/local/tomcat/webapps/cbioportal/WEB-INF/classes/portal.properties
 
 docker exec -it ##PREFIX##-##CBIOPORTAL_NAME## bash
-migrate_db.py -p /cbioportal/src/main/resources/portal.properties -s /cbioportal/db-scripts/src/main/resources/migration.sql
+migrate_db.py -p /##CBIOPORTAL_NAME##/src/main/resources/portal.properties -s /##CBIOPORTAL_NAME##/db-scripts/src/main/resources/migration.sql
 
