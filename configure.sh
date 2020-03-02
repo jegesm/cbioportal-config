@@ -62,7 +62,7 @@ case $VERB in
     docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-ldap -o o=bind ${PREFIX}-${MODULE_NAME}-ldap-var
     docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-seeddb -o o=bind ${PREFIX}-${MODULE_NAME}-seeddb
     docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-db -o o=bind ${PREFIX}-${MODULE_NAME}-mysqldb
-    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-studies -o o=bind ${PREFIX}-${MODULE_NAME}-studies
+    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-studies -o o=bind stg-cbioportal-studies
     docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_LOG} -o o=bind ${PREFIX}-${MODULE_NAME}-log
     
       DIR=${CBIOPORTAL_DIR}-admin
