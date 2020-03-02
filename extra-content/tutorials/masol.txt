@@ -1,0 +1,1 @@
+docker cp 13.3b60d87a0513ff978405.chunk.js temp2-cbioportal:/usr/local/tomcat/webapps/cbioportal/reactapp/13.3b60d87a0513ff978405.chunk.js

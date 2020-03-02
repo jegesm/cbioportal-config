@@ -1,0 +1,15 @@
+## CBIOPORTAL
+
+# tutorial video to
+docker cp /root/cbioportal/video*  temp2-cbioportal:/usr/local/tomcat/webapps/cbioportal/content/
+vim reactapp/13.3b60d87a0513ff978405.chunk.js
+
+#AFTER RESTART CHECK
+mount -o bind /data/cbioportal/_cbioportaldb/ /srv/temp/temp/_cbioportaldb/
+mount -o bind /data/cbioportal/_cbioportal/ /srv/temp/temp/_cbioportal
+mount -o bind /data/cbioportal/_cbioportal-studies/ /srv/temp/temp/_cbioportal-studies/
+
+
+#DEV
+mount -o bind /data/cbioportal2-dev/ /srv/cbioportal2
+

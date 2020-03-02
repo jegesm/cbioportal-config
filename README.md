@@ -1,52 +1,34 @@
-# cbioportal-config
-Customized cbioportal
+This should be a in a repository in ELTEVO
 
-#### Useful:
-* You can restart the webserver: 
-``` bash
-sudo initctl restart tomcat
-```
+# Create htpasswd files in nginx
+echo "cbp:" > /etc/passwords/.htpasswd
+openssl passwd -apr1 "almafa" >> /etc/passwords/.htpasswd
+# cbp:$apr1$wsZYLGUa$yb8/vQBZjzCMJzTCdM.pZ/
 
-#### Important
-* Each time you modify any java code, you must recompile and redeploy the WAR file.
-* Each time you modify any properties (see customization options), you must restart tomcat.
-* Each time you add new data, you must restart tomcat.
+It is not yet working. the frontend does not want to display anything and I don't know why
 
-Further customization options: <br>
-https://docs.cbioportal.org/2.3-customization/customizing-your-instance-of-cbioportal
+# TO SETUP MYSQL DB
+` wget https://raw.githubusercontent.com/cBioPortal/cbioportal/v2.0.0/db-scripts/src/main/resources/cgds.sql ${CBIOPORTAL_DIR}-seeddb/`
+ or if it is not working then
+`docker $DOCKERARGS cp kooplex-fiek-cbioportal:/cbioportal/db-scripts/src/main/resources/cgds.sql ${CBIOPORTAL_DIR}-seeddb/ `
+SEED_FILE=seed-cbioportal_hg19_v2.7.2.sql
+`wget https://github.com/cBioPortal/datahub/raw/9d7b90c53c189b6d2c083d156cea2932cd318c0a/seedDB/${SEED_FILE}.gz ${CBIOPORTAL_DIR}-seeddb/`
+`gunzip ${CBIOPORTAL_DIR}-seeddb/${SEED_FILE}.gz`
+AND we don't need this `docker $DOCKERARGS exec kooplex-fiek-cbioportal-mysql bash -c "mysql --user=${CBIOPORTALDB_USER} --password=${CBIOPORTALDB_PW}  ${CBIOPORTALDB} < /docker-entrypoint-initdb.d/cgds.sql"`
+and this  `docker $DOCKERARGS exec kooplex-fiek-cbioportal-mysql bash -c "mysql --user=${CBIOPORTALDB_USER} --password=${CBIOPORTALDB_PW}  ${CBIOPORTALDB} < /docker-entrypoint-initdb.d/${SEED_FILE}"`
+ because at container start it imports them automatically (???)
 
-### To put protect it a bit
 
-* conf/server.xml : 
-```
-<Realm className="org.apache.catalina.realm.MemoryRealm"></Realm>
-```
-* conf/tomcat-users.xml :
-```
- <user name="##USER##" password="##PASSWORD##" roles="test" />
-```
-* webapps/##CBIOPORTAL_NAME##/WEB-INF/web.xml
-```
-<security-constraint>
-        <web-resource-collection>
-                <web-resource-name> 
-                My Protected WebSite 
-                </web-resource-name>
-                <url-pattern> /* </url-pattern>
-                <http-method> GET </http-method>
-                <http-method> POST </http-method>
-        </web-resource-collection>
-        <auth-constraint>
-                <!-- the same like in your tomcat-users.conf file -->
-                <role-name> test </role-name>
-        </auth-constraint>
-</security-constraint>
-<login-config>
-        <auth-method> BASIC </auth-method>
-        <realm-name>  Basic Authentication </realm-name>
-</login-config>
-<security-role>
-        <description> Test role </description>
-        <role-name> test </role-name>
-</security-role>
-```
+
+## DJANGO Trukk
+ERROR: Site matching query does not exist.
+
+from django.contrib.sites.models import Site
+site = Site()
+site = Site.objects.get(domain='example.com')
+site.domain = 'kooplex-fiek.elte.hu'
+site.name = 'kooplex-fiek.elte.hu'
+site.save()
+
+## MYSQL "max_allowed_packet" Error. Fix it in the mysql container
+sed -i -e 's/16M/500M/g' /etc/mysql/conf.d/mysqldump.cnf
