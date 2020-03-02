@@ -7,7 +7,7 @@ services:
       - ##PREFIX##-##CBIOPORTAL_NAME##-mysql
       - ##PREFIX##-##CBIOPORTAL_NAME##-mongodb
       - ##PREFIX##-##CBIOPORTAL_NAME##-session-service
-    image: cbioportal/cbioportal:3.1.9 
+    image: cbioportal/cbioportal:3.2.5 
 #    image: ##PREFIX##-##CBIOPORTAL_NAME## 
 #    build:
 #      context: .
