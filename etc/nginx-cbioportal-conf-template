@@ -1,6 +1,6 @@
 
  location /cbioportal/ {
-    proxy_pass            http://##PREFIX##-##CBIOPORTAL_NAME##:8080/cbioportal/;
+    proxy_pass            http://##PREFIX##-cbioportal:8080/cbioportal/;
     proxy_set_header Host               $host;
     proxy_set_header X-Real-IP          $remote_addr;
     proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
@@ -11,6 +11,6 @@
 
   location /cbioportal-admin {
     proxy_set_header Host $http_host;
-    proxy_pass http://##PREFIX##-##CBIOPORTAL_NAME##-admin;
+    proxy_pass http://##PREFIX##-cbioportal-admin;
   }
 

@@ -1,25 +1,25 @@
 version: "3"
 
 services:
-  ##PREFIX##-##CBIOPORTAL_NAME##:
-    container_name: ##PREFIX##-##CBIOPORTAL_NAME##
+  ##PREFIX##-cbioportal:
+    container_name: ##PREFIX##-cbioportal
     depends_on:
-      - ##PREFIX##-##CBIOPORTAL_NAME##-mysql
-      - ##PREFIX##-##CBIOPORTAL_NAME##-mongodb
-      - ##PREFIX##-##CBIOPORTAL_NAME##-session-service
+      - ##PREFIX##-##MODULE_NAME##-mysql
+      - ##PREFIX##-##MODULE_NAME##-mongodb
+      - ##PREFIX##-##MODULE_NAME##-session-service
     image: cbioportal/cbioportal:3.2.5 
-#    image: ##PREFIX##-##CBIOPORTAL_NAME## 
+#    image: ##PREFIX##-cbioportal 
 #    build:
 #      context: .
 #      dockerfile: Dockerfile
     networks:
       - ##PREFIX##-net
-      - ##PREFIX##-##CBIOPORTAL_NAME##-privatenet
+      - ##PREFIX##-##MODULE_NAME##-privatenet
     volumes:
 #      - ##PREFIX##-report:/mnt/.volumes/report/:ro
       - ##CBIOPORTAL##/cbiolog:/cbioportal_logs/
       - ##CBIOPORTAL##/tomcatlog:/usr/local/tomcat/logs/
-#      - ##PREFIX##-##CBIOPORTAL_NAME##-studies:/studies/
+#      - ##PREFIX##-##MODULE_NAME##-studies:/studies/
       - ##CBIOPORTAL_CONF##/portal.properties:/cbioportal/portal.properties:ro 
     restart: unless-stopped
     logging:
@@ -34,17 +34,17 @@ services:
       - CBIOPORTALDB_USER=##CBIOPORTALDB_USER##
       - CBIOPORTALDB_PW=##CBIOPORTALDB_PW##
       - CBIOPORTALDBROOT_PW=##CBIOPORTALDBROOT_PW##
-    command:  /bin/sh -c 'java ${JAVA_OPTS} -Dauthenticate=ldap -Xms4g -Xmx4g  -Dsession.service.url=http://##PREFIX##-##CBIOPORTAL_NAME##-session-service:5000/api/sessions/my_portal/ -jar webapp-runner.jar --path /##CBIOPORTAL_NAME## /cbioportal-webapp'
+    command:  /bin/sh -c 'java ${JAVA_OPTS} -Dauthenticate=false -Xms4g -Xmx4g  -Dsession.service.url=http://##PREFIX##-##MODULE_NAME##-session-service:5000/api/sessions/my_portal/ -jar webapp-runner.jar --path /##MODULE_NAME## /cbioportal-webapp'
 
-  ##PREFIX##-##CBIOPORTAL_NAME##-mysql:
-    container_name: ##PREFIX##-##CBIOPORTAL_NAME##-mysql
+  ##PREFIX##-##MODULE_NAME##-mysql:
+    container_name: ##PREFIX##-##MODULE_NAME##-mysql
     image: mysql:5.7
     networks:
-      - ##PREFIX##-##CBIOPORTAL_NAME##-privatenet
+      - ##PREFIX##-##MODULE_NAME##-privatenet
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ##PREFIX##-##CBIOPORTAL_NAME##-mysqldb:/var/lib/mysql:rw
-      - ##PREFIX##-##CBIOPORTAL_NAME##-seeddb:/docker-entrypoint-initdb.d:ro
+      - ##PREFIX##-##MODULE_NAME##-mysqldb:/var/lib/mysql:rw
+      - ##PREFIX##-##MODULE_NAME##-seeddb:/docker-entrypoint-initdb.d:ro
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=##CBIOPORTALDBROOT_PW##
@@ -58,11 +58,11 @@ services:
         max-file: "3"
 
 
-  ##PREFIX##-##CBIOPORTAL_NAME##-mongodb:
-    container_name: ##PREFIX##-##CBIOPORTAL_NAME##-mongodb
+  ##PREFIX##-##MODULE_NAME##-mongodb:
+    container_name: ##PREFIX##-##MODULE_NAME##-mongodb
     image: mongo:3.6.6
     networks:
-      - ##PREFIX##-##CBIOPORTAL_NAME##-privatenet
+      - ##PREFIX##-##MODULE_NAME##-privatenet
     restart: unless-stopped
     environment:
       - MONGO_INITDB_DATABASE=session_service
@@ -71,35 +71,35 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  ##PREFIX##-##CBIOPORTAL_NAME##-session-service:
-    container_name: ##PREFIX##-##CBIOPORTAL_NAME##-session-service
+  ##PREFIX##-##MODULE_NAME##-session-service:
+    container_name: ##PREFIX##-##MODULE_NAME##-session-service
     image: cbioportal/session-service:latest
     depends_on:
-      - ##PREFIX##-##CBIOPORTAL_NAME##-mongodb
+      - ##PREFIX##-##MODULE_NAME##-mongodb
     networks:
-      - ##PREFIX##-##CBIOPORTAL_NAME##-privatenet
+      - ##PREFIX##-##MODULE_NAME##-privatenet
     restart: unless-stopped
     environment:
       - SERVER_PORT=5000 
-      - JAVA_OPTS=-Dspring.data.mongodb.uri=mongodb://##PREFIX##-##CBIOPORTAL_NAME##-mongodb:27017/session-service 
+      - JAVA_OPTS=-Dspring.data.mongodb.uri=mongodb://##PREFIX##-##MODULE_NAME##-mongodb:27017/session-service 
     logging:
       options:
         max-size: "10m"
         max-file: "3"
 
-  ##PREFIX##-##CBIOPORTAL_NAME##-admin:
-    container_name: ##PREFIX##-##CBIOPORTAL_NAME##-admin
-    image: ##PREFIX##-##CBIOPORTAL_NAME##-admin
+  ##PREFIX##-##MODULE_NAME##-admin:
+    container_name: ##PREFIX##-##MODULE_NAME##-admin
+    image: ##PREFIX##-##MODULE_NAME##-admin
 #    depends_on:
 #      - ##PREFIX##-hub-mysql
     build:
       context: .
       dockerfile: Dockerfile.admin
     networks:
-      - ##PREFIX##-##CBIOPORTAL_NAME##-privatenet
+      - ##PREFIX##-##MODULE_NAME##-privatenet
       - ##PREFIX##-net
     volumes:
-      - ##PREFIX##-##CBIOPORTAL_NAME##-admin:/cbioportal:rw
+      - ##PREFIX##-##MODULE_NAME##-admin:/cbioportal:rw
     restart: unless-stopped
     privileged: true
     logging:
@@ -116,15 +116,15 @@ services:
       - LDAP_PORT=##LDAP_PORT##
       - LDAP_PW=##LDAP_PW##
       - DB=##DB##
-      - DB_HOSTNAME=##PREFIX##-##CBIOPORTAL_NAME##-mysql
+      - DB_HOSTNAME=##PREFIX##-##MODULE_NAME##-mysql
       - DB_USER=##DB_USER##
       - DB_PW=##DB_PW##
       - DBROOT_PW=##DBROOT_PW##
-      - CBIOPORTAL_NAME=##CBIOPORTAL_NAME##
+      - MODULE_NAME=##MODULE_NAME##
 
-  ##PREFIX##-##CBIOPORTAL_NAME##-ldap:
-    container_name: ##PREFIX##-##CBIOPORTAL_NAME##-ldap
-    image: ##PREFIX##-##CBIOPORTAL_NAME##-ldap
+  ##PREFIX##-##MODULE_NAME##-ldap:
+    container_name: ##PREFIX##-##MODULE_NAME##-ldap
+    image: ##PREFIX##-##MODULE_NAME##-ldap
     build:
       context: .
       dockerfile: Dockerfile.ldap
@@ -135,30 +135,30 @@ services:
     networks:
       - ##PREFIX##-net
     volumes:
-      - ##PREFIX##-##CBIOPORTAL_NAME##-ldap-etc:/etc/ldap:rw
-      - ##PREFIX##-##CBIOPORTAL_NAME##-ldap-var:/var/lib/ldap:rw
+      - ##PREFIX##-##MODULE_NAME##-ldap-etc:/etc/ldap:rw
+      - ##PREFIX##-##MODULE_NAME##-ldap-var:/var/lib/ldap:rw
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
 
 networks:
   ##PREFIX##-net:
     external: true
-  ##PREFIX##-##CBIOPORTAL_NAME##-privatenet:
+  ##PREFIX##-##MODULE_NAME##-privatenet:
     external: false
 
 volumes:
   ##PREFIX##-report:
     external: true
-  ##PREFIX##-##CBIOPORTAL_NAME##-admin:
+  ##PREFIX##-##MODULE_NAME##-admin:
     external: true
-  ##PREFIX##-##CBIOPORTAL_NAME##-seeddb:
+  ##PREFIX##-##MODULE_NAME##-seeddb:
     external: true
-  ##PREFIX##-##CBIOPORTAL_NAME##-mysqldb:
+  ##PREFIX##-##MODULE_NAME##-mysqldb:
     external: true
-  ##PREFIX##-##CBIOPORTAL_NAME##-ldap-etc:
+  ##PREFIX##-##MODULE_NAME##-ldap-etc:
     external: true
-  ##PREFIX##-##CBIOPORTAL_NAME##-ldap-var:
+  ##PREFIX##-##MODULE_NAME##-ldap-var:
     external: true
-#  ##PREFIX##-##CBIOPORTAL_NAME##-studies:
+#  ##PREFIX##-##MODULE_NAME##-studies:
 #    external: true
    

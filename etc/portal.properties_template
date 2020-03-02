@@ -1,5 +1,5 @@
 # app name
-app.name=##CBIOPORTAL_NAME##
+app.name=##MODULE_NAME##
 
 # database
 db.user=##CBIOPORTALDB_USER##
@@ -7,8 +7,8 @@ db.password=##CBIOPORTALDB_PW##
 db.host=##CBIOPORTALDB_URL##
 db.portal_db_name=##CBIOPORTALDB##
 db.driver=com.mysql.jdbc.Driver
-db.connection_string=jdbc:mysql://##PREFIX##-##CBIOPORTAL_NAME##-mysql/##CBIOPORTALDB##
-db.tomcat_resource_name=jdbc/##CBIOPORTAL_NAME##
+db.connection_string=jdbc:mysql://##PREFIX##-##MODULE_NAME##-mysql/##CBIOPORTALDB##
+db.tomcat_resource_name=jdbc/##MODULE_NAME##
 # this should normally be set to false. In some cases you could set this to true (e.g. for testing a feature of a newer release that is not related to the schema change in expected db version above):
 db.suppress_schema_version_mismatch_errors=false
 
@@ -75,7 +75,7 @@ skin.study_view.link_text=To build your own case set, try out our enhanced Study
 
 # authentication
 ## is authorization enabled at all? (true, false)
-authorization=true
+authorization=false
 ## enable and set this property to specify a study group to be used to identify public studies for which no specific authorization entries are needed in the `authorities` table
 # always_show_study_group=
 
@@ -115,7 +115,7 @@ ad.domain=
 ad.url=
 ## configuration for the LDAP access
 ldap.user_search_base=##LDAPORG##
-ldap.url=ldap://##PREFIX##-##CBIOPORTAL_NAME##-ldap/
+ldap.url=ldap://##PREFIX##-##MODULE_NAME##-ldap/
 ldap.manager.dn=cn=admin,##LDAPORG##
 ldap.manager.password=##LDAP_PW##
 ## The following attributes for are good for ActiveDirectory, for OpenLDAP use "uid" for username
@@ -144,17 +144,17 @@ mdacc.heatmap.meta.url=//bioinformatics.mdanderson.org/participant2maps?particip
 segfile.url=http://cbio.mskcc.org/cancergenomics/gdac-portal/seg/
 
 # Enable OncoKB annotation (true, false)
-show.oncokb=true
+show.oncokb=false
 
 # Enable Chang's hotspot list (true, false)
-show.hotspot=true
+show.hotspot=false
 hotspots.url=https://www.cancerhotspots.org/api/
 
 # Enable Civic variant annotation (true, false)
 show.civic=false
 
 # Link to My Cancer Genome. Please disable (set to false) when using cBioPortal with patient identifiable data due My Cancer Genome license restrictions.
-mycancergenome.show=true
+mycancergenome.show=false
 
 # igv bam linking
 igv.bam.linking=

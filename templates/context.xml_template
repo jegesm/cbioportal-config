@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Context>
- <Resource name="jdbc/##CBIOPORTAL_NAME##" auth="Container" type="javax.sql.DataSource"
-      maxTotal="100" maxIdle="30" maxWaitMillis="10000"
-      username="##CBIOPORTALDB_USER##" password="##CBIOPORTALDB_PW##" driverClassName="com.mysql.jdbc.Driver"
-      url="jdbc:mysql://##CBIOPORTALDB_URL##"/>
-</Context>
-
