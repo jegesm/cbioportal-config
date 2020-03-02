@@ -19,7 +19,7 @@ services:
 #      - ##PREFIX##-report:/mnt/.volumes/report/:ro
       - ##CBIOPORTAL##/cbiolog:/cbioportal_logs/
       - ##CBIOPORTAL##/tomcatlog:/usr/local/tomcat/logs/
-#      - ##PREFIX##-##MODULE_NAME##-studies:/studies/
+      - vol-cbioportal-studies:/studies/ 
       - ##CBIOPORTAL_CONF##/portal.properties:/cbioportal/portal.properties:ro 
     restart: unless-stopped
     logging:
@@ -159,6 +159,6 @@ volumes:
     external: true
   ##PREFIX##-##MODULE_NAME##-ldap-var:
     external: true
-#  ##PREFIX##-##MODULE_NAME##-studies:
-#    external: true
+  vol-cbioportal-studies:
+    external: true
    
