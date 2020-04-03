@@ -2,7 +2,7 @@ This should be a in a repository in ELTEVO
 
 # Create htpasswd files in nginx
 echo "cbp:" > /etc/passwords/.htpasswd
-openssl passwd -apr1 "almafa" >> /etc/passwords/.htpasswd
+openssl passwd -apr1 "Apassword" >> /etc/passwords/.htpasswd
 # cbp:$apr1$wsZYLGUa$yb8/vQBZjzCMJzTCdM.pZ/
 
 It is not yet working. the frontend does not want to display anything and I don't know why
