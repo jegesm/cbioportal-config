@@ -1,7 +1,9 @@
-### Setup cbioportal as a plugin for kooplex
-This version of cbioportal is the same as the official one, but there are extra scripts that makes it possible to integrate is into the Kooplex framework, https://github.com/kooplex/kooplex-config
+# Create htpasswd files in nginx
+echo "cbp:" > /etc/passwords/.htpasswd
+openssl passwd -apr1 "Apassword" >> /etc/passwords/.htpasswd
+# cbp:$apr1$wsZYLGUa$yb8/vQBZjzCMJzTCdM.pZ/
 
-
+It is not yet working. the frontend does not want to display anything and I don't know why
 
 # TO SETUP MYSQL DB
 ` wget https://raw.githubusercontent.com/cBioPortal/cbioportal/v2.0.0/db-scripts/src/main/resources/cgds.sql ${CBIOPORTAL_DIR}-seeddb/`
@@ -21,9 +23,13 @@ ERROR: Site matching query does not exist.
 
 from django.contrib.sites.models import Site
 site = Site()
-site = Site.objects.get(site.domain = 'kooplex-fiek.elte.hu')
+site = Site.objects.get(domain='example.com')
+site.domain = 'kooplex-fiek.elte.hu'
 site.name = 'kooplex-fiek.elte.hu'
 site.save()
 
 ## MYSQL "max_allowed_packet" Error. Fix it in the mysql container
 sed -i -e 's/16M/500M/g' /etc/mysql/conf.d/mysqldump.cnf
+
+## Multiple cbioportals:
+* Site is note loading properly: there is some kind of problem when the ordering is not right in nginx if the endpoints have the same stem such as `cbioportal` and `cbioportal-something`
