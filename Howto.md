@@ -30,3 +30,6 @@ site.save()
 
 ## MYSQL "max_allowed_packet" Error. Fix it in the mysql container
 sed -i -e 's/16M/500M/g' /etc/mysql/conf.d/mysqldump.cnf
+
+## Multiple cbioportals:
+* Site is note loading properly: there is some kind of problem when the ordering is not right in nginx if the endpoints have the same stem such as `cbioportal` and `cbioportal-something`
