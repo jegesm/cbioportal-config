@@ -7,7 +7,7 @@
 #KOOPLEX_DIR=/srv/kooplex-config/
 #. ${KOOPLEX_DIR}/lib.sh
 
-MODULE_NAME=cbioportal
+MODULE_NAME=cbioportal-private
 RF=$BUILDDIR/${MODULE_NAME}
 
 mkdir -p $RF
@@ -22,11 +22,15 @@ CBIOPORTALDB_URL=$PREFIX"-"$MODULE_NAME"-mysql"
 CBIOPORTAL_LOG=$LOG_DIR/${MODULE_NAME}
 CBIOPORTAL_CONF=$CONF_DIR/${MODULE_NAME}
 
-CBIOPORTAL_DIR=$SRV/"_cbioportal"
+CBIOPORTAL_DIR=$SRV/"_$MODULE_NAME"
+CBIOPORTAL_ADMIN=${CBIOPORTAL_DIR}/admin
+CBIOPORTAL_LDAP=${CBIOPORTAL_DIR}/ldap
+CBIOPORTAL_SEEDDB=${CBIOPORTAL_DIR}/seeddb
+CBIOPORTAL_DB=${CBIOPORTAL_DIR}/db
 
 DJANGO_SECRET_KEY=oyberng3ta6oh74wehx2dePiqvci7toh
-DB=${MODULE_NAME}_admin
-DB_USER=${MODULE_NAME}_admin
+DB=cbioportal_admin
+DB_USER=cbioportal_admin
 DB_PW=${DUMMYPASS}
 DBROOT_PW=${DUMMYPASS}
 LDAP_PW=${DUMMYPASS}
@@ -42,13 +46,12 @@ case $VERB in
 
     
     mkdir -p ${CBIOPORTAL_DIR}
-    mkdir -p ${CBIOPORTAL_DIR}-admin
-    mkdir -p ${CBIOPORTAL_DIR}-ldap
-    mkdir -p ${CBIOPORTAL_DIR}-ldap/etc
-    mkdir -p ${CBIOPORTAL_DIR}-ldap/var
-    mkdir -p ${CBIOPORTAL_DIR}-seeddb
-    mkdir -p ${CBIOPORTAL_DIR}-studies
-    mkdir -p ${CBIOPORTAL_DIR}-db
+    mkdir -p ${CBIOPORTAL_ADMIN}
+    mkdir -p ${CBIOPORTAL_LDAP}/etc
+    mkdir -p ${CBIOPORTAL_LDAP}/var
+    mkdir -p ${CBIOPORTAL_SEEDDB}
+#    mkdir -p ${CBIOPORTAL_DIR}/studies
+    mkdir -p ${CBIOPORTAL_DB}
     mkdir -p ${CBIOPORTAL_CONF} 
     mkdir -p ${CBIOPORTAL_LOG} 
     
@@ -57,15 +60,15 @@ case $VERB in
     cp Dockerfile.admin etc/entrypoint-admin.sh $RF/ 
     cp etc/cgds.sql $RF/
     
-    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-admin -o o=bind ${PREFIX}-${MODULE_NAME}-admin
-    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-ldap -o o=bind ${PREFIX}-${MODULE_NAME}-ldap-etc
-    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-ldap -o o=bind ${PREFIX}-${MODULE_NAME}-ldap-var
-    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-seeddb -o o=bind ${PREFIX}-${MODULE_NAME}-seeddb
-    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-db -o o=bind ${PREFIX}-${MODULE_NAME}-mysqldb
-    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-studies -o o=bind vol-cbioportal-studies
+    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_ADMIN} -o o=bind ${PREFIX}-${MODULE_NAME}-admin
+    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_LDAP}/etc -o o=bind ${PREFIX}-${MODULE_NAME}-ldap-etc
+    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_LDAP}/var -o o=bind ${PREFIX}-${MODULE_NAME}-ldap-var
+    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_SEEDDB} -o o=bind ${PREFIX}-${MODULE_NAME}-seeddb
+    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DB} -o o=bind ${PREFIX}-${MODULE_NAME}-mysqldb
+#    docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_DIR}-studies -o o=bind vol-cbioportal-studies
     docker $DOCKERARGS volume create -o type=none -o device=${CBIOPORTAL_LOG} -o o=bind ${PREFIX}-${MODULE_NAME}-log
     
-      DIR=${CBIOPORTAL_DIR}-admin
+      DIR=${CBIOPORTAL_DIR}/admin
       if [ -d $DIR/.git ] ; then
           echo $DIR
           #cd $DIR && git pull && cd -
@@ -195,8 +198,10 @@ case $VERB in
     docker exec ${PREFIX}-${MODULE_NAME}-mysql bash -c " echo \"CREATE DATABASE $DB; CREATE USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PW'; GRANT ALL ON $DB.* TO '$DB_USER'@'%';\" |  \
              mysql -u root --password=$DBROOT_PW  -h $PREFIX-${MODULE_NAME}-mysql"
        fi
-    docker cp $RF/cgds.sql ${PREFIX}-${MODULE_NAME}-mysql:/tmp/
-    docker exec ${PREFIX}-${MODULE_NAME}-mysql bash -c "mysql -u root --password=$CBIOPORTALDBROOT_PW $CBIOPORTALDB < /tmp/cgds.sql"
+    cp $RF/cgds.sql ${CBIOPORTAL_SEEDDB}/
+    wget https://github.com/cBioPortal/datahub/raw/9d7b90c53c189b6d2c083d156cea2932cd318c0a/seedDB/seed-cbioportal_hg19_v2.7.2.sql.gz ${CBIOPORTAL_SEEDDB}/
+    docker exec ${PREFIX}-${MODULE_NAME}-mysql bash -c "mysql -u root --password=$CBIOPORTALDBROOT_PW $CBIOPORTALDB < /seeddb/cgds.sql"
+    docker exec ${PREFIX}-${MODULE_NAME}-mysql bash -c "mysql -u root --password=$CBIOPORTALDBROOT_PW $CBIOPORTALDB < /seeddb/seed-cbioportal_hg19_v2.7.2.sql"
     docker exec ${PREFIX}-${MODULE_NAME} bash -c "python3 /cbioportal/core/src/main/scripts/migrate_db.py -y --properties-file /cbioportal/portal.properties --sql /cbioportal/db-scripts/src/main/resources/migration.sql"
     echo "${PREFIX}-${MODULE_NAME} Mysql (cbio) is setup."
 
@@ -204,7 +209,7 @@ case $VERB in
     docker exec ${PREFIX}-${MODULE_NAME}-mysql bash -c "echo 'show databases' | mysql -u root --password=$CBIOPORTALDBROOT_PW -h $PREFIX-${MODULE_NAME}-mysql | grep  -q $DB" ||\
        if [ ! $? -eq 0 ];then
     docker exec ${PREFIX}-${MODULE_NAME}-mysql bash -c " echo \"CREATE DATABASE $DB; CREATE USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PW'; GRANT ALL ON $DB.* TO '$DB_USER'@'%';\" |  \
-             mysql -u root --password=$DBROOT_PW  -h $PREFIX-${MODULE_NAME}-mysql"
+            mysql -u root --password=$DBROOT_PW  -h $PREFIX-${MODULE_NAME}-mysql"
        fi
     docker exec ${PREFIX}-${MODULE_NAME}-admin python3 /cbioportal/cbioportal/manage.py makemigrations
     docker exec ${PREFIX}-${MODULE_NAME}-admin python3 /cbioportal/cbioportal/manage.py migrate
@@ -228,8 +233,8 @@ case $VERB in
   
     rm -r ${CBIOPORTAL_DIR}* $CBIOPORTAL_LOG $CBIOPORTAL_CONF
     docker $DOCKERARGS volume rm  ${PREFIX}-${MODULE_NAME}-admin ${PREFIX}-${MODULE_NAME}-ldap-etc ${PREFIX}-${MODULE_NAME}-ldap-var\
-           ${PREFIX}-${MODULE_NAME}-seeddb ${PREFIX}-${MODULE_NAME}-mysqldb ${PREFIX}-${MODULE_NAME}-studies\
-	   ${PREFIX}-${MODULE_NAME}-log
+           ${PREFIX}-${MODULE_NAME}-seeddb ${PREFIX}-${MODULE_NAME}-mysqldb \
+	   ${PREFIX}-${MODULE_NAME}-log #${PREFIX}-${MODULE_NAME}-studies
 
   ;;
   "clean")

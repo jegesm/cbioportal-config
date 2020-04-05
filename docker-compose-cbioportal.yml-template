@@ -1,13 +1,13 @@
 version: "3"
 
 services:
-  ##PREFIX##-cbioportal:
-    container_name: ##PREFIX##-cbioportal
+  ##PREFIX##-cbioportal-private:
+    container_name: ##PREFIX##-##MODULE_NAME##
     depends_on:
       - ##PREFIX##-##MODULE_NAME##-mysql
       - ##PREFIX##-##MODULE_NAME##-mongodb
       - ##PREFIX##-##MODULE_NAME##-session-service
-    image: cbioportal/cbioportal:3.2.5 
+    image: cbioportal/cbioportal:3.2.8
 #    image: ##PREFIX##-cbioportal 
 #    build:
 #      context: .
@@ -17,9 +17,8 @@ services:
       - ##PREFIX##-##MODULE_NAME##-privatenet
     volumes:
 #      - ##PREFIX##-report:/mnt/.volumes/report/:ro
-      - ##CBIOPORTAL##/cbiolog:/cbioportal_logs/
-      - ##CBIOPORTAL##/tomcatlog:/usr/local/tomcat/logs/
-      - vol-cbioportal-studies:/studies/ 
+#      - ##CBIOPORTAL##/cbiolog:/cbioportal_logs/
+#      - ##CBIOPORTAL##/tomcatlog:/usr/local/tomcat/logs/
       - ##CBIOPORTAL_CONF##/portal.properties:/cbioportal/portal.properties:ro 
     restart: unless-stopped
     logging:
@@ -35,16 +34,18 @@ services:
       - CBIOPORTALDB_PW=##CBIOPORTALDB_PW##
       - CBIOPORTALDBROOT_PW=##CBIOPORTALDBROOT_PW##
     command:  /bin/sh -c 'java ${JAVA_OPTS} -Dauthenticate=false -Xms4g -Xmx4g  -Dsession.service.url=http://##PREFIX##-##MODULE_NAME##-session-service:5000/api/sessions/my_portal/ -jar webapp-runner.jar --path /##MODULE_NAME## /cbioportal-webapp'
+#    command:  /bin/sh -c 'java ${JAVA_OPTS} -Dauthenticate=openid -Xms4g -Xmx4g  -Dsession.service.url=http://##PREFIX##-##MODULE_NAME##-session-service:5000/api/sessions/my_portal/ -jar webapp-runner.jar --path /##MODULE_NAME## /cbioportal-webapp'
 
   ##PREFIX##-##MODULE_NAME##-mysql:
     container_name: ##PREFIX##-##MODULE_NAME##-mysql
     image: mysql:5.7
     networks:
+      - ##PREFIX##-net
       - ##PREFIX##-##MODULE_NAME##-privatenet
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ##PREFIX##-##MODULE_NAME##-mysqldb:/var/lib/mysql:rw
-      - ##PREFIX##-##MODULE_NAME##-seeddb:/docker-entrypoint-initdb.d:ro
+      - ##PREFIX##-##MODULE_NAME##-seeddb:/seeddb/:ro
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=##CBIOPORTALDBROOT_PW##
@@ -159,6 +160,6 @@ volumes:
     external: true
   ##PREFIX##-##MODULE_NAME##-ldap-var:
     external: true
-  vol-cbioportal-studies:
-    external: true
+#  vol-cbioportal-studies:
+#    external: true
    

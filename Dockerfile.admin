@@ -59,7 +59,7 @@ RUN apt install -y curl zip && \
     apt install --yes nodejs 
 
 
-ENV DJANGO_VERSION 1.11
+ENV DJANGO_VERSION 3.0.4
 
 RUN pip3 install --upgrade pip
 RUN pip3 install setuptools

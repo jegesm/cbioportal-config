@@ -25,8 +25,7 @@ ERROR: Site matching query does not exist.
 
 from django.contrib.sites.models import Site
 site = Site()
-site = Site.objects.get(domain='example.com')
-site.domain = 'kooplex-fiek.elte.hu'
+site = Site.objects.get(site.domain = 'kooplex-fiek.elte.hu')
 site.name = 'kooplex-fiek.elte.hu'
 site.save()
 

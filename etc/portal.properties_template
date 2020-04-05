@@ -14,7 +14,7 @@ db.suppress_schema_version_mismatch_errors=false
 
 # web page cosmetics
 skin.title=The Hungarian Oncogenome Project
-skin.email_contact=bodor.csaba1 at med dot semmelweis-univ dot hu
+skin.email_contact=david.visontai at complex.elte.hu
 skin.authorization_message=Access to this portal is only available to authorized users at the Hungarian Oncogenome Project.
 skin.example_study_queries=tcga\ntcga -provisional\ntcga -moratorium\ntcga OR icgc\n-"cell line"\nprostate mskcc\nesophageal OR stomach\nserous\nbreast
 skin.data_sets_header=The portal currently contains data from the following cancer genomics studies.  The table below lists the number of available samples per data type and tumor.
@@ -60,7 +60,7 @@ skin.footer=
 
 
 # setting controlling html for the contact
-skin.login.contact_html=If you think you have received this message in error, please contact us at <a style="color:#FF0000" href="mailto:bodor.csaba1@med.semmelweis-univ.hu">bodor.csaba1@med.semmelweis-univ.hu</a>
+skin.login.contact_html=If you think you have received this message in error, please contact us at <a style="color:#FF0000" href="mailto:david.visontai@complex.elte.hu">david.visontai@complex.elte.hu</a>
 
 # setting controlling the saml registration
 skin.login.saml.registration_html=Sign in with MSK

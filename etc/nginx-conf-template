@@ -1,6 +1,6 @@
 
- location /cbioportal/ {
-    proxy_pass            http://##PREFIX##-cbioportal:8080/cbioportal/;
+ location /cbioportal-private/ {
+    proxy_pass            http://##PREFIX##-##MODULE_NAME##:8080/cbioportal-private/;
     proxy_set_header Host               $host;
     proxy_set_header X-Real-IP          $remote_addr;
     proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
@@ -9,8 +9,8 @@
 #    auth_basic_user_file /etc/passwords/.htpasswd;
 }
 
-  location /cbioportal-admin {
+  location /cbioportal-private-admin {
     proxy_set_header Host $http_host;
-    proxy_pass http://##PREFIX##-cbioportal-admin;
+    proxy_pass http://##PREFIX##-##MODULE_NAME##-admin;
   }
 
