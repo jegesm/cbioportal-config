@@ -1,4 +1,3 @@
-Here is a tutorial:
+## Hungarian Oncogenome and Personalised Tumor Diagnostics and Therapy National Program
 
-[Video about something](https://github.com/jegesm/cbioportal-config/blob/master/docs/fiek/video1.mp4)
-         
+You can read about the program [here](http://genomics.hu/projects/oncogenome/).
