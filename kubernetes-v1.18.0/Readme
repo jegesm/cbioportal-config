@@ -1,0 +1,15 @@
+# All files for docker setup is in veo1:/srv/vols/cbioportal-hunco
+kubectl create namespace cbioportal-hunco
+
+# Basic auth access
+openssl passwd -apr1 "pw" > auth-cbp
+kubectl create secret generic basic-auth -n cbioportal-hunco --from-file=auth-cbp
+
+# TLS
+#ln -s /home/fonok/certs/cbioportal.vo.elte.hu certs
+HOST=cbioportal
+KEY_FILE=certs/${HOST}_vo_elte_hu.key
+CERT_FILE=certs/${HOST}_vo_concat.crt
+CERT_NAME=tls-${HOST}
+cat certs/${HOST}_vo_elte_hu_cert.cer certs/${HOST}_vo_elte_hu_interm.cer > ${CERT_FILE}
+kubectl create secret tls ${CERT_NAME} --key ${KEY_FILE} --cert ${CERT_FILE} -n cbioportal-hunco
