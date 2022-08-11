@@ -1,0 +1,9 @@
+{
+  fqdn: 'cbioportal.hu',
+  ns: 'cbioportal',
+  name: 'cbioportal',
+  dbname: 'cbioportaldb',
+  dbuser: 'cbioportal',
+  dbpw: 'pw',
+  dbrootpw: 'pw',
+}
