@@ -1,0 +1,10 @@
+config.sh
+modules/plugins/
+certs
+adminpw
+DONTCOMMI*
+config.libsonnet
+_old/
+_/
+manifest/
+raw/

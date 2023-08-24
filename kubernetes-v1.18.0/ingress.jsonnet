@@ -11,6 +11,9 @@ local Config = import 'config.libsonnet';
       annotations: {
         'kubernetes.io/ingress.class': 'nginx',
         'nginx.ingress.kubernetes.io/rewrite-target': '/',
+        'nginx.ingress.kubernetes.io/auth-type': 'basic',
+        'nginx.ingress.kubernetes.io/auth-secret': 'basic-auth',
+        'nginx.ingress.kubernetes.io/auth-realm': 'Authentication Required!',
       },
       //    nginx.ingress.kubernetes.io/auth-type: basic
       //    nginx.ingress.kubernetes.io/auth-secret: basic-auth
